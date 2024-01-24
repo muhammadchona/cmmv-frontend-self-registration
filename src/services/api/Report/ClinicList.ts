@@ -63,16 +63,13 @@ export default {
 
     const rows = result;
     const data = [];
-    let ord = 1;
 
     for (const row in rows) {
       const createRow = [];
       createRow.push(rows[row].name);
       createRow.push(rows[row].type);
       data.push(createRow);
-      ord += 1;
     }
-    ord = 0;
     autoTable(doc, {
       margin: { top: 42 },
       bodyStyles: {
