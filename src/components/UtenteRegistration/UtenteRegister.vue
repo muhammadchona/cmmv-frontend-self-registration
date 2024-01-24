@@ -144,75 +144,7 @@
             label="Número de Telemovel com Whatsapp"
           />
         </div>
-        <div class="row q-pl-sm q-my-lg bold-text">
-          <strong>Unidade Sanitaria para Acompanhamento </strong>
-        </div>
-        <div class="row justify-end">
-          <q-toggle
-            v-model="searchNearMe"
-            label="Ver locais próximos a mim"
-            @update:model-value="changeValue()"
-            left-label
-          />
-        </div>
-        <div class="row q-mb-md">
-          <q-select
-            class="col"
-            dense
-            outlined
-            rounded
-            v-model="selectedProvince"
-            :options="provinces"
-            :disable="disableFields"
-            transition-show="flip-up"
-            transition-hide="flip-down"
-            ref="provinceRef"
-            option-value="id"
-            option-label="description"
-            :rules="[(val) => val != null || ' Por favor indique a província']"
-            lazy-rules
-            label="Província"
-          />
-          <q-select
-            class="col q-pl-sm"
-            dense
-            outlined
-            rounded
-            transition-show="flip-up"
-            transition-hide="flip-down"
-            :disable="disableFields"
-            v-model="selectedDistrict"
-            :options="districts"
-            ref="districtRef"
-            option-value="id"
-            option-label="description"
-            :rules="[
-              (val) => val != null || ' Por favor indique a Distrito/Cidade',
-            ]"
-            lazy-rules
-            label="Distrito"
-          />
-        </div>
-        <div class="row q-mb-md">
-          <q-select
-            class="col"
-            dense
-            outlined
-            rounded
-            transition-show="flip-up"
-            transition-hide="flip-down"
-            v-model="selectedClinic"
-            :options="clinics"
-            ref="clinicRef"
-            option-value="id"
-            option-label="name"
-            :rules="[
-              (val) => val != null || ' Por favor indique a Unidade Sanitaria',
-            ]"
-            lazy-rules
-            label="Unidade Sanitaria"
-          />
-        </div>
+        <clinic-location-listing></clinic-location-listing>
         <div class="row q-mb-md">
           <q-input
             dense
@@ -277,17 +209,14 @@ import inputPhoneCode from 'components/Shared/IconPhoneCode.vue';
 import { useLoading } from 'src/composables/shared/loading/loading';
 import utenteService from 'src/services/api/utente/UtenteService';
 import UtenteSuccess from './UtenteSuccess.vue';
+import ClinicLocationListing from './ClinicLocationListing.vue';
 
 const { closeLoading, showloading } = useLoading();
-const birthMinDate = ref(new Date());
 const utente = ref(new Utente());
-const ageText = ref('');
 const currUtente = ref({});
 const selectedProvince = ref(null);
 const selectedDistrict = ref(null);
 const selectedClinic = ref(null);
-const editedIndex = ref('');
-// const address = ref(new Address());
 const searchNearMe = ref(false);
 const location = ref(null);
 const gettingLocation = ref(false);
@@ -299,7 +228,6 @@ const myLocation = {
 };
 const dateOfBirth = ref('');
 const ageCalculated = ref('');
-const date1 = ref(moment(date).format('YYYY/MM/DD'));
 
 const nomeRef = ref(null);
 const apelidoRef = ref(null);
@@ -312,7 +240,8 @@ const ageRef = ref(null);
 const clinicRef = ref(null);
 const appointmentDateRef = ref(null);
 const disableFields = ref(false);
-const showUtenteRegistrationScreen = inject('showUtenteRegistrationScreen');
+const showRegistrationScreen = inject('showRegistrationScreen');
+const showMainScreen = inject('showMainScreen');
 const appointment = ref(new Appointment());
 const showSucessScreen = ref(false);
 let initialDistrict = 0;
@@ -429,9 +358,6 @@ const ageCalculator = () => {
     ageCalculated.value = '';
   }
 };
-const formatDateDDMMYYYY = (value) => {
-  return date.formatDate(value, 'DD-MM-YYYY');
-};
 
 const blockDataFutura = (date) => {
   return date <= moment(new Date()).format('YYYY/MM/DD');
@@ -452,7 +378,7 @@ const changeValue = () => {
   */
 };
 
-const closeRegistration = (close) => {
+const closeRegistration = () => {
   showloading();
   setTimeout(() => {
     closeLoading();
@@ -462,36 +388,22 @@ const closeRegistration = (close) => {
 };
 
 const closeRegistrationVerification = () => {
-  if (
-    (address.value.province !== null &&
-      address.value.province !== undefined &&
-      address.value.province !== '') ||
-    (address.value.residence !== null &&
-      address.value.residence !== undefined &&
-      address.value.residence.trim().length > 0) ||
-    utente.value.firstNames.length > 0 ||
-    utente.value.lastNames.length > 0
-  ) {
-    verificationDialog();
-  } else {
-    showloading();
-    setTimeout(() => {
-      closeLoading();
-      showUtenteRegistrationScreen.value = false;
-    }, 100);
-  }
+  console.log(showRegistrationScreen);
+  showRegistrationScreen.value = false;
+  showMainScreen.value = true;
 };
 
+/*
 const verificationDialog = () => {
   alertWarningAction('Pretende voltar ao ecrã anterior?').then((result) => {
     if (result) {
       utente.value = {};
       //  emit('update:showUtenteRegistrationScreenProp', false)
-      showUtenteRegistrationScreen.value = false;
+      showRegistrationScreen.value = false;
     }
   });
 };
-
+*/
 const getParams = () => {
   provinceService.get(0);
   districtService.get(0);
@@ -601,7 +513,7 @@ const validatePhonePrefix = (val) => {
   }
 };
 
-const getLocation = async (val) => {
+const getLocation = async () => {
   return new Promise((resolve, reject) => {
     if (!('geolocation' in navigator)) {
       reject(
@@ -621,7 +533,7 @@ const getLocation = async (val) => {
   });
 };
 
-const locateMe = async (val) => {
+const locateMe = async () => {
   // showloading();
   gettingLocation.value = true;
   try {
@@ -647,63 +559,6 @@ const locateMe = async (val) => {
     });
   }
 };
-
-// Function to calculate distances of clinics based on user's geolocation
-function calculateClinicDistances(userLatitude, userLongitude, clinics) {
-  // Function to calculate distance between two points using Haversine formula
-  function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in kilometers
-    return distance;
-  }
-
-  function toRadians(degrees) {
-    return degrees * (Math.PI / 180);
-  }
-
-  // Calculate distances for each clinic
-  const clinicsWithDistances = clinics.map((clinic) => {
-    const distance = calculateDistance(
-      userLatitude,
-      userLongitude,
-      clinic.latitude,
-      clinic.longitude
-    );
-    return { ...clinic, distance };
-  });
-
-  // Sort clinics by distance (ascending order)
-  clinicsWithDistances.sort((a, b) => a.distance - b.distance);
-
-  // Return the list of clinics with distances
-  return clinicsWithDistances;
-}
-
-// Example usage:
-const userLatitude = 40.7128; // User's latitude (replace with actual user latitude)
-const userLongitude = -74.006; // User's longitude (replace with actual user longitude)
-
-const clinics1 = [
-  { name: 'Clinic A', latitude: 40.73061, longitude: -73.935242 },
-  { name: 'Clinic B', latitude: 40.748817, longitude: -73.985428 },
-  // Add more clinics with their coordinates
-];
-
-// Call the function passing user's coordinates and clinics data
-const nearbyClinics = calculateClinicDistances(
-  userLatitude,
-  userLongitude,
-  clinics1
-);
 
 provide('utente', utente);
 provide('appointment', appointment);

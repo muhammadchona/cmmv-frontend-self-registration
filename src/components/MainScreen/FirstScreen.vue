@@ -1,6 +1,6 @@
 <template>
-  <div class="red-square">
-    <div class="image-container">
+  <div class="redd-square">
+    <div class="first-container">
       <img src="~src/assets/02.png" style="height: auto" fit="cover" />
     </div>
     <div class="button-container">
@@ -45,16 +45,27 @@ import navigationButtons from 'components/MainScreen/NavigationButtons.vue';
 import pageContent from 'components/MainScreen/Buttons.vue';
 </script>
 <style>
-.image-container {
+.first-container {
   width: 100%;
   height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px; /* Add top padding as needed */
 }
-.red-square {
-  width: 100%; /* Adjust percentage as needed */
-  height: auto; /* Change as needed or remove if using fixed height */
-  background-color: #f5997a; /* Light red color */
+
+.redd-square {
+  width: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5997a; /* Light red color */
+  padding: 20px; /* Adjust padding */
+  box-sizing: border-box;
+  border-radius: 30px; /* Adicione um raio de borda para a curva */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
 .button-container {

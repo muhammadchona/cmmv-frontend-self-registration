@@ -115,10 +115,6 @@ const blockDataPassado = (date) => {
   return date >= moment(new Date()).format('YYYY/MM/DD');
 };
 
-const formatDateShort = (value) => {
-  return date.formatDate(value, 'DD-MM-YYYY');
-};
-
 const promptToConfirm = (appointmentToConfirm) => {
   $q.dialog({
     title: 'Confirm',
@@ -126,13 +122,14 @@ const promptToConfirm = (appointmentToConfirm) => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    const clinic = appointmentToConfirm.clinic;
+    // const clinic = appointmentToConfirm.clinic;
     appointmentToConfirm.clinic = {};
     appointmentToConfirm.clinic.id = selectedClinic.value.id;
     appointmentToConfirm.appointmentDate = moment(
       editedAppointment.value.appointmentDate,
       'DD-MM-YYYY'
     ).toDate();
+
     //  appointmentToConfirm.value.time = editedAppointment.value.time;
 
     console.log(appointmentToConfirm);
@@ -140,8 +137,13 @@ const promptToConfirm = (appointmentToConfirm) => {
       .patch(appointmentToConfirm.id, appointmentToConfirm)
       .then((resp) => {
         console.log(resp.data);
-        alertSucess('Consulta Remarcada com Sucesso');
+
         // editedAppointment.value = resp.data;
+        editedAppointment.value.appointmentDate = moment(
+          editedAppointment.value.appointmentDate
+        ).format('DD-MM-YYYY');
+        editedAppointment.value.clinic = selectedClinic.value;
+        alertSucess('Consulta Remarcada com Sucesso');
         showReshedule.value = false;
         console.log(editedAppointment.value);
         // showSucessScreen.value = true;

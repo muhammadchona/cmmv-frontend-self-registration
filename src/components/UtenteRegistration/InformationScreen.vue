@@ -1,8 +1,17 @@
 <template>
+  <div class="col q-my-sm">
+    <q-btn
+      flat
+      round
+      color="orange"
+      icon="chevron_left"
+      @click="goBackToMainScreen()"
+    />
+  </div>
   <div class="container">
     <div class="red-square">
       <div class="title">
-        <h2>Information</h2>
+        <h2>Informação</h2>
       </div>
       <div class="image-container">
         <img
@@ -51,18 +60,24 @@
         <q-tab-panel name="clinics">
           <clinicsList />
         </q-tab-panel>
-        <q-tab-panel name="enviados">
-          <utentes-view-list :utentes="utentesEnviados" />
-        </q-tab-panel>
       </q-tab-panels>
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import viewDocs from '../EducationMaterial/MaterialEducativo.vue';
 import clinicsList from '../EducationMaterial/ClinicsList.vue';
-const tab = ref('associados');
+const tab = ref('material');
+
+const showInformationScreen = inject('showInformationScreen');
+const showMainScreen = inject('showMainScreen');
+
+const goBackToMainScreen = () => {
+  console.log(showInformationScreen);
+  showInformationScreen.value = false;
+  showMainScreen.value = true;
+};
 </script>
 <style>
 .container {
@@ -75,8 +90,8 @@ const tab = ref('associados');
 }
 
 .red-square {
-  width: 100%;
-  height: auto;
+  width: 50%; /* Ajuste para ocupar metade da largura */
+  height: 50%; /* Ajuste para ocupar metade da altura */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -84,6 +99,8 @@ const tab = ref('associados');
   background-color: #f5997a; /* Light red color */
   padding: 20px; /* Adjust padding */
   box-sizing: border-box;
+  border-radius: 15px; /* Adicione um raio de borda para a curva */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Adicione uma sombra */
 }
 
 .title {
