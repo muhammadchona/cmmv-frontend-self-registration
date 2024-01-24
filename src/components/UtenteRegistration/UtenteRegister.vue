@@ -144,75 +144,7 @@
             label="Número de Telemovel com Whatsapp"
           />
         </div>
-        <div class="row q-pl-sm q-my-lg bold-text">
-          <strong>Unidade Sanitaria para Acompanhamento </strong>
-        </div>
-        <div class="row justify-end">
-          <q-toggle
-            v-model="searchNearMe"
-            label="Ver locais próximos a mim"
-            @update:model-value="changeValue()"
-            left-label
-          />
-        </div>
-        <div class="row q-mb-md">
-          <q-select
-            class="col"
-            dense
-            outlined
-            rounded
-            v-model="selectedProvince"
-            :options="provinces"
-            :disable="disableFields"
-            transition-show="flip-up"
-            transition-hide="flip-down"
-            ref="provinceRef"
-            option-value="id"
-            option-label="description"
-            :rules="[(val) => val != null || ' Por favor indique a província']"
-            lazy-rules
-            label="Província"
-          />
-          <q-select
-            class="col q-pl-sm"
-            dense
-            outlined
-            rounded
-            transition-show="flip-up"
-            transition-hide="flip-down"
-            :disable="disableFields"
-            v-model="selectedDistrict"
-            :options="districts"
-            ref="districtRef"
-            option-value="id"
-            option-label="description"
-            :rules="[
-              (val) => val != null || ' Por favor indique a Distrito/Cidade',
-            ]"
-            lazy-rules
-            label="Distrito"
-          />
-        </div>
-        <div class="row q-mb-md">
-          <q-select
-            class="col"
-            dense
-            outlined
-            rounded
-            transition-show="flip-up"
-            transition-hide="flip-down"
-            v-model="selectedClinic"
-            :options="clinics"
-            ref="clinicRef"
-            option-value="id"
-            option-label="name"
-            :rules="[
-              (val) => val != null || ' Por favor indique a Unidade Sanitaria',
-            ]"
-            lazy-rules
-            label="Unidade Sanitaria"
-          />
-        </div>
+        <clinic-location-listing></clinic-location-listing>
         <div class="row q-mb-md">
           <q-input
             dense
@@ -277,6 +209,7 @@ import inputPhoneCode from 'components/Shared/IconPhoneCode.vue';
 import { useLoading } from 'src/composables/shared/loading/loading';
 import utenteService from 'src/services/api/utente/UtenteService';
 import UtenteSuccess from './UtenteSuccess.vue';
+import ClinicLocationListing from './ClinicLocationListing.vue';
 
 const { closeLoading, showloading } = useLoading();
 const utente = ref(new Utente());

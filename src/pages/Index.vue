@@ -99,14 +99,9 @@ const showfourthScreen = ref(false);
 const showfifthScreen = ref(false);
 const showSixthScreen = ref(false);
 const showSeventhScreen = ref(false);
-const showEightScreen = ref(false);
 const showRegistrationScreen = ref(false);
 const showSearchScreen = ref(false);
 const showInformationScreen = ref(false);
-
-const goHome = (utente) => {
-  // showLoginScreen.value = true;
-};
 
 provide('showRegistrationScreen', showRegistrationScreen);
 provide('showMainScreen', showMainScreen);
