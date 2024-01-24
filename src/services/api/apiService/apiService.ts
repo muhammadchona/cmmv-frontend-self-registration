@@ -4,6 +4,7 @@ import { useSystemUtils } from 'src/composables/shared/systemUtils/systemUtils';
 
 const instance = axios.create({
   baseURL: 'http://dev.fgh.org.mz:4110/api',
+  // baseURL: 'http://localhost:8882/api',
 });
 // Request interceptor for API calls
 instance.interceptors.request.use(
