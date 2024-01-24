@@ -74,7 +74,7 @@
   </q-page>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 import mainScreen from 'components/MainScreen/MainScreen.vue';
 import firstScreen from 'components/MainScreen/FirstScreen.vue';
 import secondScreen from 'components/MainScreen/SecondMainScreen.vue';
@@ -105,7 +105,11 @@ const showSearchScreen = ref(false);
 const showInformationScreen = ref(false);
 
 const goHome = (utente) => {
-  showLoginScreen.value = true;
+  // showLoginScreen.value = true;
 };
+
+provide('showRegistrationScreen', showRegistrationScreen);
+provide('showMainScreen', showMainScreen);
+provide('showInformationScreen', showInformationScreen);
 </script>
 <style lang="scss"></style>
