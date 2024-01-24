@@ -198,8 +198,7 @@
 </template>
 <script setup>
 import Utente from 'src/stores/models/utente/Utente';
-import { date } from 'quasar';
-import { ref, onMounted, computed, inject, provide } from 'vue';
+import { ref, onMounted, inject, provide } from 'vue';
 import moment from 'moment';
 import Appointment from '../../stores/models/appointment/Appointment';
 import provinceService from '../../services/api/province/provinceService';
@@ -209,18 +208,15 @@ import inputPhoneCode from 'components/Shared/IconPhoneCode.vue';
 import { useLoading } from 'src/composables/shared/loading/loading';
 import utenteService from 'src/services/api/utente/UtenteService';
 import UtenteSuccess from './UtenteSuccess.vue';
+import { useDateUtils } from 'src/composables/shared/dateUtils/dateUtils';
 import ClinicLocationListing from './ClinicLocationListing.vue';
 
 const { closeLoading, showloading } = useLoading();
+const { getYYYYMMDDFromJSDate, getDateFromHyphenDDMMYYYY } = useDateUtils();
 const utente = ref(new Utente());
 const currUtente = ref({});
-const selectedProvince = ref(null);
-const selectedDistrict = ref(null);
 const selectedClinic = ref(null);
-const searchNearMe = ref(false);
-const location = ref(null);
-const gettingLocation = ref(false);
-const errorStr = ref(null);
+
 const myLocation = {
   latitude: '',
   longitude: '',
@@ -234,100 +230,31 @@ const apelidoRef = ref(null);
 const phoneRef = ref(null);
 const birthDateRef = ref(null);
 const whatsappRef = ref(null);
-const provinceRef = ref(null);
-const districtRef = ref(null);
 const ageRef = ref(null);
 const clinicRef = ref(null);
 const appointmentDateRef = ref(null);
-const disableFields = ref(false);
 const showRegistrationScreen = inject('showRegistrationScreen');
 const showMainScreen = inject('showMainScreen');
 const appointment = ref(new Appointment());
 const showSucessScreen = ref(false);
-let initialDistrict = 0;
 
 onMounted(async () => {
   currUtente.value = Object.assign({}, utente.value);
   getParams();
-  await locateMe();
+  // await locateMe();
   console.log(myLocation);
+  /*
   clinicService.getClinicsByGeoLocationAndRadius(
     myLocation.latitude,
     myLocation.longitude,
     10
   );
+  */
   //  console.log(utenteToEdit.value)
 });
 
 const blockDataPassado = (date) => {
   return date >= moment(new Date()).format('YYYY/MM/DD');
-};
-
-const provinces = computed(() => {
-  return provinceService.getAllProvinces();
-});
-
-const districts = computed(() => {
-  if (selectedProvince.value !== null) {
-    return districtService.getAllByProvinceId(selectedProvince.value.id);
-  } else {
-    return null;
-  }
-});
-
-const clinics = computed(() => {
-  if (selectedDistrict.value != null) {
-    return getClinicsByDistrictId();
-  } else if (searchNearMe.value === true) {
-    getClinicsByGeoLocationAndRadius();
-    return clinicService.getAllFromStorage();
-  } else {
-    return [];
-  }
-});
-
-const getClinicsByGeoLocationAndRadius = async () => {
-  return clinicService.getClinicsByGeoLocationAndRadius(
-    myLocation.latitude,
-    myLocation.longitude,
-    10
-  );
-};
-
-const getClinicsByDistrictId = () => {
-  console.log(selectedDistrict.value.id);
-  if (
-    selectedDistrict.value.id != undefined &&
-    initialDistrict !== selectedDistrict.value.id
-  ) {
-    showloading();
-    initialDistrict = selectedDistrict.value.id;
-    getAllClinicsByDistrictId(selectedDistrict.value.id).then((resp) => {
-      closeLoading();
-      console.log(resp);
-    });
-  }
-  console.log(selectedDistrict.value);
-  if ((selectedDistrict.value.id != undefined) != null) {
-    return getLocalClinicsByDistrictId(selectedDistrict.value.id);
-  } else {
-    return null;
-  }
-};
-
-const getLocalClinicsByDistrictId = (districtId) => {
-  return clinicService.getLocalClinicsByDistrictId(districtId);
-};
-
-const getAllClinicsByDistrictId = async (districtId) => {
-  /*
-           await Clinic.api().get('/clinic/district/' + districtId).then(resp => {
-              console.log(resp.response.data)
-            }).catch(error => {
-                console.log(error)
-            })
-            */
-  return await clinicService.getAllClinicsByDistrictId(districtId);
 };
 
 const dateOfBirthCalculator = () => {
@@ -361,21 +288,6 @@ const ageCalculator = () => {
 
 const blockDataFutura = (date) => {
   return date <= moment(new Date()).format('YYYY/MM/DD');
-};
-
-const changeValue = () => {
-  console.log('mudou');
-  if (searchNearMe.value) {
-    disableFields.value = true;
-  } else {
-    disableFields.value = false;
-  }
-  // Display or use the sorted list of clinics with distances
-  /*
-  nearbyClinics.forEach((clinic) => {
-    console.log(`${clinic.name} - Distance: ${clinic.distance.toFixed(2)} km`);
-  });
-  */
 };
 
 const closeRegistration = () => {
@@ -416,7 +328,6 @@ const validateUtente = () => {
   birthDateRef.value.validate();
   whatsappRef.value.validate();
   ageRef.value.validate();
-  clinicRef.value.validate();
   appointmentDateRef.value.validate();
   if (
     !nomeRef.value.hasError &&
@@ -424,13 +335,14 @@ const validateUtente = () => {
     !phoneRef.value.hasError &&
     !whatsappRef.value.hasError &&
     !ageRef.value.hasError &&
-    !clinicRef.value.hasError &&
+    selectedClinic.value !== null &&
     !appointmentDateRef.value.hasError
   ) {
     saveOrUpdateUtente();
   }
 };
 
+/*
 const getYYYYMMDDFromJSDate = (jsDate) => {
   return moment(jsDate).local().format('YYYY-MM-DD');
 };
@@ -438,6 +350,7 @@ const getYYYYMMDDFromJSDate = (jsDate) => {
 const getDateFromHyphenDDMMYYYY = (jsDate) => {
   return date.extractDate(jsDate, 'DD-MM-YYYY');
 };
+*/
 
 const saveOrUpdateUtente = () => {
   console.log(dateOfBirth.value);
@@ -513,53 +426,7 @@ const validatePhonePrefix = (val) => {
   }
 };
 
-const getLocation = async () => {
-  return new Promise((resolve, reject) => {
-    if (!('geolocation' in navigator)) {
-      reject(
-        new Error(
-          'Localização Geográfica não está disponível. Por favor, ligue a Localização Geográfica no seu dispositivo.'
-        )
-      );
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        resolve(pos);
-      },
-      (err) => {
-        reject(err);
-      }
-    );
-  });
-};
-
-const locateMe = async () => {
-  // showloading();
-  gettingLocation.value = true;
-  try {
-    gettingLocation.value = false;
-    location.value = await getLocation();
-    console.log(location.value);
-    myLocation.latitude = location.value.coords.latitude;
-    myLocation.longitude = location.value.coords.longitude;
-    closeLoading();
-  } catch (e) {
-    gettingLocation.value = false;
-    errorStr.value = e.message;
-    closeLoading();
-    alertWarningAction(
-      'Não tem permissões para aceder a localização do dispositivo ou a função de localização encontra-se desligada.\n Por favor ligue a localização ou dê as permissões de localização'
-    ).then((result) => {
-      if (result) {
-        myLocation.latitude = -25.9678239;
-        myLocation.longitude = 32.5864914;
-        console.log(myLocation);
-        closeLoading();
-      }
-    });
-  }
-};
-
 provide('utente', utente);
 provide('appointment', appointment);
+provide('selectedClinic', selectedClinic);
 </script>
