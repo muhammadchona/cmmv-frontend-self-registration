@@ -1,13 +1,8 @@
 import { useRepo } from 'pinia-orm';
 import api from '../apiService/apiService';
 import Utente from 'src/stores/models/utente/Utente';
-import { useSwal } from 'src/composables/shared/dialog/dialog';
-import { useSystemUtils } from 'src/composables/shared/systemUtils/systemUtils';
 
 const utente = useRepo(Utente);
-
-const { alertSucess, alertError } = useSwal();
-const { isMobile } = useSystemUtils();
 
 export default {
   async post(params: string) {

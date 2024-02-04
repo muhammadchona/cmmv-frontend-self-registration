@@ -47,21 +47,14 @@
   </q-page>
 </template>
 <script setup>
-import UtenteService from 'src/services/api/utente/UtenteService';
-import { ref, inject, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
+import { inject, onMounted } from 'vue';
 
 onMounted(async () => {
   console.log(utente.value);
-
-  //  console.log(utenteToEdit.value)
 });
 
 const redirectToIndex = () => {
   console.log('clicked');
-  // Redirect to the index page
   window.location.reload(true); // Replace '/' with your index route
 };
 const utente = inject('utente');

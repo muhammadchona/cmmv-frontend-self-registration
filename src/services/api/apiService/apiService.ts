@@ -1,9 +1,8 @@
-import axios, { Axios } from 'axios';
+import axios from 'axios';
 //import UsersService from 'src/services/UsersService';
-import { useSystemUtils } from 'src/composables/shared/systemUtils/systemUtils';
 
 const instance = axios.create({
-  baseURL: 'http://dev.fgh.org.mz:4110/api',
+  baseURL: 'http://173.255.228.95:4110/api',
   // baseURL: 'http://localhost:8882/api',
 });
 // Request interceptor for API calls

@@ -74,12 +74,11 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed, inject, provide } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import provinceService from '../../services/api/province/provinceService';
 import districtService from '../../services/api/district/districtService';
 import clinicService from 'src/services/api/clinic/clinicService';
 import { useLoading } from 'src/composables/shared/loading/loading';
-import { useSwal } from 'src/composables/shared/dialog/dialog';
 import clinicList from '../../services/api/Report/ClinicList';
 const { closeLoading, showloading } = useLoading();
 const selectedProvince = ref(null);

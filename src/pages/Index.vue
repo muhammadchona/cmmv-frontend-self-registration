@@ -16,11 +16,12 @@
         @searchAppointment="
           (showSearchScreen = true), (showFirstScreen = false)
         "
+        @previousScreen="(showFirstScreen = false), (showMainScreen = true)"
       />
       <secondScreen
         v-if="showSecondScreen"
         @previousScreen="
-          (showSecondScreen = !showSecondScreen), (showMainScreen = true)
+          (showSecondScreen = !showSecondScreen), (showFirstScreen = true)
         "
         @nextScreen="(showThirdScreen = true), (showSecondScreen = false)"
       />
@@ -54,6 +55,7 @@
       />
       <seventhScreen
         v-if="showSeventhScreen"
+        @firstScreen="(showSeventhScreen = false), (showMainScreen = true)"
         @previousScreen="
           (showSeventhScreen = !showSeventhScreen), (showSixthScreen = true)
         "
@@ -67,9 +69,17 @@
           (showInformationScreen = true), (showSeventhScreen = false)
         "
       />
-      <utenteRegistration v-if="showRegistrationScreen"></utenteRegistration>
-      <searchAppointment v-if="showSearchScreen"></searchAppointment>
-      <informationScreen v-if="showInformationScreen"></informationScreen>
+      <utenteRegistration v-if="showRegistrationScreen" />
+      <searchAppointment
+        v-if="showSearchScreen"
+        @previousScreen="(showSearchScreen = false), (showFirstScreen = true)"
+      />
+      <informationScreen
+        v-if="showInformationScreen"
+        @previousScreen="
+          (showInformationScreen = false), (showSeventhScreen = true)
+        "
+      />
     </div>
   </q-page>
 </template>
@@ -86,10 +96,6 @@ import seventhScreen from 'components/MainScreen/SeventhMainScreen.vue';
 import utenteRegistration from './../components/UtenteRegistration/UtenteRegister.vue';
 import searchAppointment from './../components/UtenteRegistration/SearchAppointment.vue';
 import informationScreen from '../components/UtenteRegistration/InformationScreen.vue';
-//import Addresss from 'components/Utente/Address.vue'
-//import SuccessRegistration from 'components/Utente/SuccessRegistration.vue'
-// import clinicSearch from 'components/Utente/SearchSanitaryUnit.vue'
-// import appointment from 'components/Utente/Appointment.vue'
 
 const showMainScreen = ref(true);
 const showFirstScreen = ref(false);
@@ -104,7 +110,7 @@ const showSearchScreen = ref(false);
 const showInformationScreen = ref(false);
 
 provide('showRegistrationScreen', showRegistrationScreen);
-provide('showMainScreen', showMainScreen);
+provide('showFirstScreen', showFirstScreen);
 provide('showInformationScreen', showInformationScreen);
 </script>
 <style lang="scss"></style>

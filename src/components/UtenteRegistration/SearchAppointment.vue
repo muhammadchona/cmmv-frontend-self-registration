@@ -6,7 +6,13 @@
         <div class="row items-center q-mb-md bg-deep-orange-3">
           <!-- Left button -->
           <div class="col q-my-sm">
-            <q-btn flat round color="white" icon="chevron_left" />
+            <q-btn
+              flat
+              round
+              color="white"
+              icon="chevron_left"
+              @click="$emit('previousScreen')"
+            />
           </div>
 
           <!-- Title -->
@@ -122,9 +128,8 @@ import { ref, provide } from 'vue';
 import appointmentService from 'src/services/api/appointment/appointmentService';
 import resheduleApp from 'components/UtenteRegistration/ResheduleAppoinment.vue';
 import moment from 'moment';
-// import { useLoading } from 'src/composables/shared/loading/loading';
 import { useSwal } from 'src/composables/shared/dialog/dialog';
-const { alertWarning } = useSwal();
+const { alertWarning, alertError } = useSwal();
 const appointment = ref(null);
 const showReshedule = ref(false);
 const showDetails = ref(false);
@@ -132,6 +137,15 @@ const utenteSystemNumber = ref();
 
 const searchAppointment = async () => {
   console.log(utenteSystemNumber.value);
+  if (
+    utenteSystemNumber.value === null ||
+    utenteSystemNumber.value === undefined ||
+    utenteSystemNumber.value === ''
+  ) {
+    alertError('Por favor introduza o código do utente.');
+    return true;
+  }
+
   if (!validateCodeFormat()) {
     alertWarning(
       'O código de utente introduzido está no formato incorrecto.' +
@@ -150,7 +164,6 @@ const searchAppointment = async () => {
   appointment.value.appointmentDate = moment(
     appointment.value.appointmentDate
   ).format('DD-MM-YYYY');
-  console.log(appointment.value);
 };
 
 const getColourText = () => {
@@ -162,7 +175,7 @@ const getColourText = () => {
 };
 
 const validateCodeFormat = () => {
-  const pattern = /^\d{6}-[A-Z\d]{2}-\d{9}$/;
+  const pattern = /^\d{6}-[A-Za-z\d]{2}-\d{9}$/;
   return pattern.test(utenteSystemNumber.value.trim());
 };
 

@@ -77,14 +77,14 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed, inject, provide } from 'vue';
+import { ref, onMounted, computed, inject } from 'vue';
 import provinceService from '../../services/api/province/provinceService';
 import districtService from '../../services/api/district/districtService';
 import clinicService from 'src/services/api/clinic/clinicService';
 import { useLoading } from 'src/composables/shared/loading/loading';
 import { useSwal } from 'src/composables/shared/dialog/dialog';
 const { closeLoading, showloading } = useLoading();
-const { alertWarningAction } = useSwal();
+const { alertInfo } = useSwal();
 const disableFields = ref(false);
 const selectedProvince = ref(null);
 const selectedDistrict = ref(null);
@@ -208,6 +208,7 @@ const getAllClinicsByDistrictId = async (districtId) => {
 
 const locateMe = async (val) => {
   // showloading();
+  console.log(val)
   gettingLocation.value = true;
   try {
     gettingLocation.value = false;
@@ -220,8 +221,8 @@ const locateMe = async (val) => {
     gettingLocation.value = false;
     errorStr.value = e.message;
     closeLoading();
-    alertWarningAction(
-      'Não tem permissões para aceder a localização do dispositivo ou a função de localização encontra-se desligada.\n Por favor ligue a localização ou dê as permissões de localização'
+    alertInfo(
+      'Não tem permissões ou a função de localização do dispositivo encontra-se desligada.\n Por favor dê as permissões ou ligue a localização.'
     ).then((result) => {
       if (result) {
         myLocation.latitude = -25.9678239;

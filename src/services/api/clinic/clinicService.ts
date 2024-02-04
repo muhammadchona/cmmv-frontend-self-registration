@@ -1,11 +1,8 @@
 import { useRepo } from 'pinia-orm';
 import api from '../apiService/apiService';
 import Clinic from 'src/stores/models/clinic/Clinic';
-import { useSwal } from 'src/composables/shared/dialog/dialog';
 
 const clinic = useRepo(Clinic);
-
-const { alertSucess, alertError } = useSwal();
 
 export default {
   async getAllClinicsByDistrictId(districtId: number) {

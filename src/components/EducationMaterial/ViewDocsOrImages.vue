@@ -7,7 +7,6 @@
         color="primary"
         icon="file_download"
         no-caps
-        v-if="showDownload"
         @click.stop="getInfoDocsOrImagesById(file.id)"
       />
     </q-item-section>
@@ -15,21 +14,16 @@
 </template>
 <script setup>
 import infoDocsOrImagesSerice from '../../services/api/dorcOrImages/infoDocsOrImagesSerice';
-import { useQuasar, QSpinnerIos } from 'quasar';
+import { useQuasar } from 'quasar';
 import { useLoading } from 'src/composables/shared/loading/loading';
-import { useSwal } from 'src/composables/shared/dialog/dialog';
-
-const props = defineProps(['file', 'id', 'showDownload']);
 
 const { closeLoading, showloading } = useLoading();
-const { alertSucess, alertError, alertInfo, alertWarningAction } = useSwal();
 const $q = useQuasar();
 
-//props: ['file', 'id', 'showDownload']
+const props = defineProps(['file']);
+
 const forceFileDownload = (materialEducativo, title, $q) => {
   if (typeof cordova !== 'undefined') {
-    //   var blob = new Blob(materialEducativo.blop)
-    //  const bytes = new Uint8Array(materialEducativo.blop)
     var UTF8_STR = new Uint8Array(materialEducativo.blop);
     var BINARY_ARR = UTF8_STR.buffer;
     var titleFile = removeAccentsSpacesAndParenthesis(title);
@@ -83,9 +77,7 @@ const forceFileDownload = (materialEducativo, title, $q) => {
     }
     function openFile() {
       var strTitle = titleFile;
-      console.log('file system 44444: ' + strTitle);
       var folder = cordova.file.externalRootDirectory + 'Download/' + strTitle;
-      console.log('file system 2222: ' + folder);
       var documentURL = decodeURIComponent(folder);
       cordova.plugins.fileOpener2.open(documentURL, 'application/pdf', {
         error: function (e) {
@@ -114,8 +106,6 @@ const getInfoDocsOrImagesById = (id) => {
   infoDocsOrImagesSerice
     .apiFetchById(id)
     .then((resp) => {
-      //  offset = offset + 100
-      console.log(resp.data);
       forceFileDownload(resp.data, resp.data.title + '.pdf', $q);
       closeLoading();
     })
@@ -130,5 +120,4 @@ const removeAccentsSpacesAndParenthesis = (value) => {
   console.log('val11' + val);
   return val;
 };
-//    props: [],
 </script>

@@ -18,12 +18,11 @@
       enter-active-class="animated fadeIn"
       leave-active-class="animated fadeOut"
     >
-      <mainScreenInstruction />
     </transition>
   </transition-group>
-  <div class="absolute-bottom flex flex-center q-my-lg">
+  <div class="absolute-bottom flex flex-center q-my-md">
     <q-btn
-      class="full-width q-py-sm"
+      class="q-py-sm"
       unelevated
       rounded
       color="primary"
@@ -32,22 +31,4 @@
     />
   </div>
 </template>
-<script setup>
-import { ref } from 'vue';
-import mainScreenInstruction from 'components/UserInstructions/MainScreenInstruction.vue';
-// import { Platform } from 'quasar';
-
-// const fab = ref(false);
-/*
-const slide = ref(1);
-const autoplay = ref(true);
-
-const computedTitleClass = computed(() => {
-  return Platform.is.desktop ? 'text-h1-xl' : 'text-h5'
-});
-
-const computedSubTitleClass = computed(() => {
-  return Platform.is.desktop ? 'text-h1-xl' : 'text-h5'
-});
-*/
-</script>
+<script setup></script>

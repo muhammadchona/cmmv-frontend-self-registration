@@ -15,9 +15,17 @@
   "cordova": {
     "platforms": [
       "android"
-    ]
+    ],
+    "plugins": {
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-geolocation": {
+        "GPS_REQUIRED": "true"
+      }
+    }
   },
   "devDependencies": {
-    "cordova-android": "^12.0.0"
+    "cordova-android": "^12.0.0",
+    "cordova-plugin-geolocation": "github:apache/cordova-plugin-geolocation",
+    "cordova-plugin-splashscreen": "github:apache/cordova-plugin-splashscreen"
   }
 }

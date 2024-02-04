@@ -29,9 +29,8 @@
 </template>
 <script setup>
 import { onMounted, computed } from 'vue';
-import InfoDocsOrImages from '../../stores/models/dorcOrImages/InfoDocsOrImages';
 import infoDocsOrImagesSerice from '../../services/api/dorcOrImages/infoDocsOrImagesSerice';
-import { useQuasar, QSpinnerIos } from 'quasar';
+import { useQuasar } from 'quasar';
 import { useLoading } from 'src/composables/shared/loading/loading';
 import viewDocsOrImages from './ViewDocsOrImages.vue';
 
