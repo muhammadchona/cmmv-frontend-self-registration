@@ -2,11 +2,12 @@ import { useRepo } from 'pinia-orm';
 import api from '../apiService/apiService';
 import Appointment from 'src/stores/models/appointment/Appointment';
 import { useSwal } from 'src/composables/shared/dialog/dialog';
-import { useSystemUtils } from 'src/composables/shared/systemUtils/systemUtils';
 import { date } from 'quasar';
 import UtenteService from '../utente/UtenteService';
 
 const appointment = useRepo(Appointment);
+
+const { alertInfo, alertError } = useSwal();
 
 export default {
   async post(params: string) {
@@ -31,6 +32,17 @@ export default {
       .then((resp) => {
         appointment.save(resp.data);
         return resp;
+      })
+      .catch((error) => {
+        if (error.response) {
+          alertInfo(
+            'Nenhuma consulta encontrada com o código \n[' + systemNumber + ']'
+          );
+        } else if (!error.status) {
+          alertError(
+            'Não foi possivel conectar-se ao serviço de pesquisa. \nPor favor tente mais tarde.'
+          );
+        }
       });
   },
 
@@ -46,10 +58,10 @@ export default {
   },
   getAppointmentByUtenteSystemNumber(systemNumber: number) {
     const utente = UtenteService.getLocalUtenteBySystemNumber(systemNumber);
-    console.log(utente);
     return appointment.query().where('utente_id', utente.id).first();
   },
   getAppointmentByUtenteId(utenteId: number) {
+    console.log(utenteId);
     //  return appointment.query().where('utente_id', ).first();
   },
 

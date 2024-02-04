@@ -72,20 +72,24 @@
         />
       </div>
     </div>
+    <div class="row absolute-bottom justify-center">
+    <q-btn
+      flat
+      color="red"
+      @click="$emit('firstScreen')"
+      label="Sair"
+    />
+  </div>
     <transition
       appear
       enter-active-class="animated fadeIn"
       leave-active-class="animated fadeOut"
     >
-      <seventhScreenInstruction />
     </transition>
   </transition-group>
 </template>
 
-<script setup>
-import seventhScreenInstruction from 'components/UserInstructions/SeventhMainScreenInstruction.vue';
-import pageContent from 'components/MainScreen/Content.vue';
-</script>
+<script setup></script>
 
 <style>
 .link {

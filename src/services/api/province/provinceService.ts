@@ -1,8 +1,11 @@
 import { useRepo } from 'pinia-orm';
 import api from '../apiService/apiService';
 import Province from 'src/stores/models/province/Province';
+import { useSwal } from 'src/composables/shared/dialog/dialog';
 
 const province = useRepo(Province);
+
+const { alertError } = useSwal();
 
 export default {
   get(offset: number) {
@@ -17,7 +20,11 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
+          if (!error.status) {
+            alertError(
+              'Não foi possivel conectar-se ao serviço central. \nPor favor tente mais tarde.'
+            );
+          }
         });
     }
   },

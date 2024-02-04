@@ -5,14 +5,11 @@
       round
       color="orange"
       icon="chevron_left"
-      @click="goBackToMainScreen()"
+      @click="$emit('previousScreen')"
     />
   </div>
   <div class="container">
     <div class="red-square">
-      <div class="title">
-        <h2>Informação</h2>
-      </div>
       <div class="image-container">
         <img
           src="~src/assets/information.png"
@@ -33,7 +30,6 @@
       style="border-style: solid; border-color: #ee764e"
       class="text-grey q-mb-lg"
     >
-      <!--q-tab name="pendentes" label="Pendentes"/-->
       <q-tab
         style="border-style: solid; border-color: white"
         name="material"
@@ -65,19 +61,10 @@
   </div>
 </template>
 <script setup>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import viewDocs from '../EducationMaterial/MaterialEducativo.vue';
 import clinicsList from '../EducationMaterial/ClinicsList.vue';
 const tab = ref('material');
-
-const showInformationScreen = inject('showInformationScreen');
-const showMainScreen = inject('showMainScreen');
-
-const goBackToMainScreen = () => {
-  console.log(showInformationScreen);
-  showInformationScreen.value = false;
-  showMainScreen.value = true;
-};
 </script>
 <style>
 .container {

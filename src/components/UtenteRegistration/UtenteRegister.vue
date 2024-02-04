@@ -203,7 +203,6 @@ import moment from 'moment';
 import Appointment from '../../stores/models/appointment/Appointment';
 import provinceService from '../../services/api/province/provinceService';
 import districtService from '../../services/api/district/districtService';
-import clinicService from 'src/services/api/clinic/clinicService';
 import inputPhoneCode from 'components/Shared/IconPhoneCode.vue';
 import { useLoading } from 'src/composables/shared/loading/loading';
 import utenteService from 'src/services/api/utente/UtenteService';
@@ -231,26 +230,16 @@ const phoneRef = ref(null);
 const birthDateRef = ref(null);
 const whatsappRef = ref(null);
 const ageRef = ref(null);
-const clinicRef = ref(null);
 const appointmentDateRef = ref(null);
 const showRegistrationScreen = inject('showRegistrationScreen');
-const showMainScreen = inject('showMainScreen');
+const showFirstScreen = inject('showFirstScreen');
 const appointment = ref(new Appointment());
 const showSucessScreen = ref(false);
 
 onMounted(async () => {
   currUtente.value = Object.assign({}, utente.value);
   getParams();
-  // await locateMe();
   console.log(myLocation);
-  /*
-  clinicService.getClinicsByGeoLocationAndRadius(
-    myLocation.latitude,
-    myLocation.longitude,
-    10
-  );
-  */
-  //  console.log(utenteToEdit.value)
 });
 
 const blockDataPassado = (date) => {
@@ -294,28 +283,14 @@ const closeRegistration = () => {
   showloading();
   setTimeout(() => {
     closeLoading();
-    // $emit('update:showUtenteRegistrationScreenProp', close)
-    //  showUtenteRegistrationScreen.value = false;
   }, 100);
 };
 
 const closeRegistrationVerification = () => {
-  console.log(showRegistrationScreen);
   showRegistrationScreen.value = false;
-  showMainScreen.value = true;
+  showFirstScreen.value = true;
 };
 
-/*
-const verificationDialog = () => {
-  alertWarningAction('Pretende voltar ao ecrã anterior?').then((result) => {
-    if (result) {
-      utente.value = {};
-      //  emit('update:showUtenteRegistrationScreenProp', false)
-      showRegistrationScreen.value = false;
-    }
-  });
-};
-*/
 const getParams = () => {
   provinceService.get(0);
   districtService.get(0);
@@ -342,16 +317,6 @@ const validateUtente = () => {
   }
 };
 
-/*
-const getYYYYMMDDFromJSDate = (jsDate) => {
-  return moment(jsDate).local().format('YYYY-MM-DD');
-};
-
-const getDateFromHyphenDDMMYYYY = (jsDate) => {
-  return date.extractDate(jsDate, 'DD-MM-YYYY');
-};
-*/
-
 const saveOrUpdateUtente = () => {
   console.log(dateOfBirth.value);
   utente.value.birthDate = getYYYYMMDDFromJSDate(
@@ -361,7 +326,6 @@ const saveOrUpdateUtente = () => {
   console.log(utente.value.birthDate);
   utente.value.syncStatus = 'S';
   fillAppointmentData();
-  // utenteService.post(utente.value)
   console.log(utente.value);
   utenteService.post(utente.value).then((resp) => {
     console.log(resp.data);

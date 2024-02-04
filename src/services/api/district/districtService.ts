@@ -1,13 +1,8 @@
 import { useRepo } from 'pinia-orm';
 import api from '../apiService/apiService';
 import District from 'src/stores/models/district/District';
-import { useSwal } from 'src/composables/shared/dialog/dialog';
-import { useSystemUtils } from 'src/composables/shared/systemUtils/systemUtils';
 
 const district = useRepo(District);
-
-const { alertSucess, alertError } = useSwal();
-const { isMobile } = useSystemUtils();
 
 export default {
   post(params: string) {

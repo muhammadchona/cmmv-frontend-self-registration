@@ -1,13 +1,8 @@
 import { useRepo } from 'pinia-orm';
 import api from '../apiService/apiService';
 import InfoDocsOrImages from 'src/stores/models/dorcOrImages/InfoDocsOrImages';
-import { useSwal } from 'src/composables/shared/dialog/dialog';
-import { useSystemUtils } from 'src/composables/shared/systemUtils/systemUtils';
 
 const infoDocsOrImages = useRepo(InfoDocsOrImages);
-
-const { alertSucess, alertError } = useSwal();
-const { isMobile } = useSystemUtils();
 
 export default {
   get(offset: number) {
@@ -46,9 +41,6 @@ export default {
   },
 
   getAllForMobilizer() {
-    console.log(
-      '111' + infoDocsOrImages.query().where('forMobilizer', true).get()
-    );
     return infoDocsOrImages.query().where('forMobilizer', true).get();
   },
 };

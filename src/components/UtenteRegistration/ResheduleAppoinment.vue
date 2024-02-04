@@ -95,7 +95,6 @@
 </template>
 
 <script setup>
-import { date } from 'quasar';
 import { onBeforeMount, ref, inject, provide } from 'vue';
 import moment from 'moment';
 import { useQuasar } from 'quasar';
