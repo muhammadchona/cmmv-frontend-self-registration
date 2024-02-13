@@ -1,12 +1,6 @@
 <template>
-  <div class="col q-my-sm">
-    <q-btn
-      flat
-      round
-      color="orange"
-      icon="chevron_left"
-      @click="$emit('previousScreen')"
-    />
+  <div class="row text-black text-weight-bolder justify-center q-pt-lg text-h6">
+    Informação
   </div>
   <div class="container">
     <div class="red-square">
@@ -57,6 +51,15 @@
           <clinicsList />
         </q-tab-panel>
       </q-tab-panels>
+    </div>
+    <div class="col q-my-sm">
+      <q-btn
+        flat
+        round
+        color="primary"
+        icon="west"
+        @click="$emit('previousScreen')"
+      />
     </div>
   </div>
 </template>

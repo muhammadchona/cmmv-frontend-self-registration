@@ -17,10 +17,10 @@
         <div class="col"><q-space /></div>
       </div>
       <form @submit.prevent="validateUtente">
-        <div class="row q-my-lg q-pl-sm">
+        <div class="row q-pl-sm">
           <strong>Dados Pessoais </strong>
         </div>
-        <div class="row">
+        <div class="row q-pr-sm q-pl-sm q-pt-md">
           <q-input
             label="Nome *"
             dense
@@ -32,7 +32,7 @@
             v-model="utente.firstNames"
           />
         </div>
-        <div class="row">
+        <div class="row q-pr-sm q-pl-sm q-pt-md">
           <q-input
             label="Apelido *"
             dense
@@ -46,7 +46,7 @@
             v-model="utente.lastNames"
           />
         </div>
-        <div class="row">
+        <div class="row q-pr-sm q-pl-sm q-pt-md">
           <div class="col-8 q-pr-sm">
             <q-input
               dense
@@ -60,7 +60,7 @@
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy
-                    ref="qDateProxy"
+                    ref="qDateProxyRef"
                     transition-show="scale"
                     transition-hide="scale"
                   >
@@ -111,11 +111,11 @@
             </q-input>
           </div>
         </div>
-        <div class="row">
-          <input-phone-code dense rounded outlined class="col-2">
+        <div class="row q-pr-sm q-pl-sm">
+          <input-phone-code dense rounded outlined class="col-2 q-pt-lg">
           </input-phone-code>
           <q-input
-            class="col"
+            class="col q-pt-lg"
             mask="#########"
             ref="phoneRef"
             dense
@@ -128,7 +128,7 @@
             label="Número de Telefone"
           />
         </div>
-        <div class="row">
+        <div class="row q-pr-sm q-pl-sm q-pt-md">
           <input-phone-code dense rounded outlined class="col-2">
           </input-phone-code>
           <q-input
@@ -145,13 +145,13 @@
           />
         </div>
         <clinic-location-listing></clinic-location-listing>
-        <div class="row q-mb-md">
+        <div class="row q-pr-sm q-pl-sm">
           <q-input
             dense
             class="col"
             rounded
             outlined
-            v-model="appointment.appointmentDate"
+            v-model="appointmentDate"
             ref="appointmentDateRef"
             label="Data da Consulta"
           >
@@ -164,8 +164,8 @@
                 >
                   <q-date
                     mask="DD-MM-YYYY"
-                    v-model="appointment.appointmentDate"
-                    :options="blockDataPassado"
+                    v-model="appointmentDate"
+                    :options="blockDataFuturaAndPassadaAppo"
                   >
                     <div class="row items-center justify-end">
                       <q-btn
@@ -181,7 +181,7 @@
             </template>
           </q-input>
         </div>
-        <div class="bottom q-mb-md">
+        <div class="bottom q-mb-md q-pr-sm q-pl-sm">
           <q-btn
             class="full-width q-py-sm q-mt-lg"
             unelevated
@@ -209,8 +209,12 @@ import utenteService from 'src/services/api/utente/UtenteService';
 import UtenteSuccess from './UtenteSuccess.vue';
 import { useDateUtils } from 'src/composables/shared/dateUtils/dateUtils';
 import ClinicLocationListing from './ClinicLocationListing.vue';
+import { useSwal } from 'src/composables/shared/dialog/dialog';
+import { useAppointmentValidation } from 'src/composables/shared/appointment/appointmentMethods';
+const { alertError } = useSwal();
 
 const { closeLoading, showloading } = useLoading();
+const { validateAppointmentDate } = useAppointmentValidation();
 const { getYYYYMMDDFromJSDate, getDateFromHyphenDDMMYYYY } = useDateUtils();
 const utente = ref(new Utente());
 const currUtente = ref({});
@@ -235,16 +239,14 @@ const showRegistrationScreen = inject('showRegistrationScreen');
 const showFirstScreen = inject('showFirstScreen');
 const appointment = ref(new Appointment());
 const showSucessScreen = ref(false);
+const qDateProxyRef = ref(null);
+const appointmentDate = ref('');
 
 onMounted(async () => {
   currUtente.value = Object.assign({}, utente.value);
   getParams();
   console.log(myLocation);
 });
-
-const blockDataPassado = (date) => {
-  return date >= moment(new Date()).format('YYYY/MM/DD');
-};
 
 const dateOfBirthCalculator = () => {
   if (
@@ -273,10 +275,21 @@ const ageCalculator = () => {
   } else {
     ageCalculated.value = '';
   }
+  qDateProxyRef.value.closePopup();
 };
 
 const blockDataFutura = (date) => {
   return date <= moment(new Date()).format('YYYY/MM/DD');
+};
+
+const blockDataFuturaAndPassadaAppo = (date) => {
+  const currentDate = moment();
+  const threeMonthsFromNow = moment().add(3, 'months');
+
+  return (
+    moment(date).isBefore(threeMonthsFromNow) &&
+    moment(date).isSameOrAfter(currentDate)
+  );
 };
 
 const closeRegistration = () => {
@@ -323,23 +336,31 @@ const saveOrUpdateUtente = () => {
     getDateFromHyphenDDMMYYYY(dateOfBirth.value)
   );
   utente.value.registerDate = new Date();
-  console.log(utente.value.birthDate);
   utente.value.syncStatus = 'S';
   fillAppointmentData();
-  console.log(utente.value);
-  utenteService.post(utente.value).then((resp) => {
-    console.log(resp.data);
-    utente.value = resp.data;
-    console.log(utente.value);
-    showSucessScreen.value = true;
-  });
+  if (validateAppointmentDate(appointmentDate.value)) {
+    utenteService
+      .post(utente.value)
+      .then((resp) => {
+        console.log(resp.data);
+        utente.value = resp.data;
+        console.log(utente.value);
+        showSucessScreen.value = true;
+      })
+      .catch((error) => {
+        alertError(
+          'Ocorreu um erro a gravar os dados ! Ja Existe um utente com o mesmo numero de telefone, nome e apelido'
+        );
+        console.log(error);
+      });
 
-  closeRegistration(false);
+    closeRegistration(false);
+  }
 };
 
 const fillAppointmentData = () => {
-  console.log(appointment.value.appointmentDate);
-  const newDate = new Date(appointment.value.appointmentDate, 'DD-MM-YYYY');
+  console.log(appointmentDate);
+  const newDate = new Date(appointmentDate.value, 'DD-MM-YYYY');
   utente.value.clinic = selectedClinic.value;
   utente.value.status = 'ENVIADO';
   appointment.value.clinic = selectedClinic.value;
@@ -348,7 +369,7 @@ const fillAppointmentData = () => {
   appointment.value.orderNumber = 1;
   appointment.value.visitDate = null;
   appointment.value.appointmentDate = moment(
-    appointment.value.appointmentDate,
+    appointmentDate.value,
     'DD-MM-YYYY'
   ).format('YYYY-MM-DD');
   appointment.value.time = newDate.getHours() + ':' + newDate.getMinutes();

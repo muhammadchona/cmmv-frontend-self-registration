@@ -14,15 +14,6 @@
             src="~src/assets/07Escolha.png"
             style="height: auto; max-width: 100%"
           />
-          <div class="row q-pa-md">
-            <q-btn
-              flat
-              round
-              color="primary"
-              icon="west"
-              @click="$emit('previousScreen')"
-            />
-          </div>
           <div class="row q-mb-lg">
             <q-item-label class="text-h4">{{
               'Faça uma escolha consciente'
@@ -54,32 +45,67 @@
       </q-item>
     </q-slide-item>
     <div class="q-pa-md">
-      <div class="row justify-center">
-        <q-btn
-          class="q-mr-md"
-          unelevated
-          rounded
-          color="primary"
-          label="Marcar Consulta"
-          @click="$emit('createAppointment')"
-        />
-        <q-btn
-          unelevated
-          rounded
-          color="green"
-          label="Pesquisar Consulta"
-          @click="$emit('searchAppointment')"
-        />
+      <div class="row justify-center q-gutter-md">
+        <!-- Use 'col' classes for responsive columns -->
+        <q-col v-if="!$q.platform.is.mobile" cols="6">
+          <q-btn
+            unelevated
+            rounded
+            color="primary"
+            label="Marcar Consulta"
+            @click="$emit('createAppointment')"
+          />
+        </q-col>
+
+        <q-col cols="12" v-if="$q.platform.is.mobile">
+          <!-- Full width on mobile -->
+          <q-btn
+            unelevated
+            rounded
+            color="primary"
+            label="Marcar Consulta"
+            @click="$emit('createAppointment')"
+          />
+        </q-col>
+
+        <q-col v-if="!$q.platform.is.mobile" cols="6">
+          <q-btn
+            unelevated
+            rounded
+            color="green"
+            label="Pesquisar Consulta"
+            @click="$emit('searchAppointment')"
+          />
+        </q-col>
+
+        <q-col cols="12" v-if="$q.platform.is.mobile">
+          <!-- Full width on mobile -->
+          <q-btn
+            unelevated
+            rounded
+            color="green"
+            label="Pesquisar Consulta"
+            @click="$emit('searchAppointment')"
+          />
+        </q-col>
+      </div>
+      <div class="row q-pt-md">
+        <div class="col-4">
+          <q-btn
+            flat
+            round
+            color="primary"
+            icon="west"
+            @click="$emit('previousScreen')"
+          />
+        </div>
+        <div class="col-4 flex justify-center items-center">
+          <q-btn flat color="red" @click="$emit('firstScreen')" label="Sair" />
+        </div>
+        <div class="col-4"></div>
       </div>
     </div>
-    <div class="row absolute-bottom justify-center">
-    <q-btn
-      flat
-      color="red"
-      @click="$emit('firstScreen')"
-      label="Sair"
-    />
-  </div>
+
     <transition
       appear
       enter-active-class="animated fadeIn"

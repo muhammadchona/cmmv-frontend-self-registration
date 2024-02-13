@@ -17,11 +17,13 @@
         <q-icon name="arrow_forward_ios" />
       </template>
       <q-item>
-        <div key="secondScreen" class="q-gutter-md row items-start">
+        <div key="secondScreen" class="q-gutter-md row items-start q-pr-sm">
           <img
             src="~src/assets/02Definicao.png"
             style="height: auto; max-width: 100%"
+            class="border-black-2"
           />
+
           <pageContent
             title="O que é a circuncisão"
             content="Circuncisão masculina médica é uma pequena cirurgia que consiste na retirada da pele que cobre a cabeça do pénis (prepúcio)."
@@ -48,4 +50,8 @@ import secondScreenInstruction from 'components/UserInstructions/SecondMainScree
 import navigationButtons from 'components/MainScreen/NavigationButtons.vue';
 import pageContent from 'components/MainScreen/Content.vue';
 </script>
-<style></style>
+<style scoped>
+.image-container1 {
+  border: 1px solid #000;
+}
+</style>

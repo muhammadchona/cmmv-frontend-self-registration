@@ -27,57 +27,50 @@ const forceFileDownload = (materialEducativo, title, $q) => {
     var UTF8_STR = new Uint8Array(materialEducativo.blop);
     var BINARY_ARR = UTF8_STR.buffer;
     var titleFile = removeAccentsSpacesAndParenthesis(title);
-    console.log('result' + titleFile);
-    saveBlob2File(titleFile, BINARY_ARR);
-    function saveBlob2File(fileName, blob) {
-      var folder = cordova.file.externalRootDirectory + 'Download';
-      window.resolveLocalFileSystemURL(
-        folder,
-        function (dirEntry) {
-          console.log('file system open: ' + dirEntry.name);
-          console.log('file system open11111: ' + blob);
-          createFile(dirEntry, fileName, blob);
-          $q.loading.hide();
-        },
-        onErrorLoadFs
-      );
-    }
-    function createFile(dirEntry, fileName, blob) {
-      // Creates a new file
-      dirEntry.getFile(
-        fileName,
-        { create: true, exclusive: false },
-        function (fileEntry) {
-          writeFile(fileEntry, blob);
-        },
-        onErrorCreateFile
-      );
-    }
+    var targetPath =
+      cordova.file.externalRootDirectory + 'Download/' + titleFile;
+    var base64String = arrayBufferToBase64(BINARY_ARR);
+    function arrayBufferToBase64(buffer) {
+      var binary = '';
+      var bytes = new Uint8Array(buffer);
+      var len = bytes.byteLength;
 
-    function writeFile(fileEntry, dataObj) {
-      // Create a FileWriter object for our FileEntry
-      fileEntry.createWriter(function (fileWriter) {
-        fileWriter.onwriteend = function () {
-          console.log('Successful file write...');
+      for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+
+      return btoa(binary);
+    }
+    document.addEventListener('deviceready', onDeviceReady, false);
+    function onDeviceReady() {
+      console.log(cordova.file);
+      console.log(FileTransfer);
+      saveBlobToFile(UTF8_STR, targetPath);
+    }
+    function saveBlobToFile(blob, filePath) {
+      var fileTransfer = new FileTransfer();
+
+      fileTransfer.download(
+        encodeURI('data:application/pdf;base64,' + base64String),
+        filePath,
+        function (entry) {
+          console.log('File download success: ' + entry.toURL());
           openFile();
-        };
-
-        fileWriter.onerror = function (error) {
-          console.log('Failed file write: ' + error);
-        };
-        fileWriter.write(dataObj);
-      });
-    }
-    function onErrorLoadFs(error) {
-      console.log(error);
+          // Handle success, you can do further actions here
+        },
+        function (error) {
+          console.error('File download error: ' + JSON.stringify(error));
+          // Handle error, you can do error handling here
+        },
+        false // Set to true if you want to trust all hosts (use with caution)
+      );
     }
 
-    function onErrorCreateFile(error) {
-      console.log(error);
-    }
     function openFile() {
       var strTitle = titleFile;
+      console.log('file system 44444: ' + strTitle);
       var folder = cordova.file.externalRootDirectory + 'Download/' + strTitle;
+      console.log('file system 2222: ' + folder);
       var documentURL = decodeURIComponent(folder);
       cordova.plugins.fileOpener2.open(documentURL, 'application/pdf', {
         error: function (e) {
@@ -85,6 +78,8 @@ const forceFileDownload = (materialEducativo, title, $q) => {
         },
       });
     }
+    // var titleFile = titleFile1 + '.pdf';
+    console.log('result' + titleFile);
   } else {
     const bytes = btoa(
       new Uint8Array(materialEducativo.blop).reduce(
@@ -106,7 +101,7 @@ const getInfoDocsOrImagesById = (id) => {
   infoDocsOrImagesSerice
     .apiFetchById(id)
     .then((resp) => {
-      forceFileDownload(resp.data, resp.data.title + '.pdf', $q);
+      forceFileDownload(resp.data, resp.data.title, $q);
       closeLoading();
     })
     .catch((error) => {

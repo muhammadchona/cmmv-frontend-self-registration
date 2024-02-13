@@ -18,6 +18,7 @@
     </edit-config>
     <preference name="Scheme" value="http" />
     <preference name="SplashMaintainAspectRatio" value="true" />
+    <allow-intent href="market:*" />
     <platform name="android">
         <icon density="ldpi" src="res/android/ldpi.png" />
         <icon density="mdpi" src="res/android/mdpi.png" />

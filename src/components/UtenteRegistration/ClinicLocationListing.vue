@@ -1,8 +1,8 @@
 <template>
-  <div class="row q-pl-sm q-my-lg bold-text">
-    <strong>Unidade Sanitaria para Acompanhamento </strong>
+  <div class="row q-pl-sm bold-text">
+    <strong>Local e Data da Consulta</strong>
   </div>
-  <div class="row justify-end">
+  <div class="row justify-end q-pr-sm">
     <q-toggle
       v-model="searchNearMe"
       label="Ver locais próximos a mim"
@@ -10,13 +10,14 @@
       left-label
     />
   </div>
-  <div class="row q-mb-md" v-if="!disableFields">
+  <div class="row q-mb-md q-pr-sm q-pl-sm" v-if="!disableFields">
     <q-select
       class="col"
       dense
       outlined
       rounded
       v-model="selectedProvince"
+      @update:model-value="changeProvince(province)"
       :options="provinces"
       transition-show="flip-up"
       transition-hide="flip-down"
@@ -44,7 +45,7 @@
       label="Distrito"
     />
   </div>
-  <div class="row q-mb-md">
+  <div class="row q-mb-md q-pr-sm q-pl-sm">
     <q-select
       class="col"
       dense
@@ -61,7 +62,7 @@
         (val) => val != null || ' Por favor indique a Unidade Sanitaria',
       ]"
       lazy-rules
-      label="Unidade Sanitaria"
+      label="Local da consulta"
     >
       <template v-slot:option="scope">
         <q-item v-bind="scope.itemProps">
@@ -100,9 +101,20 @@ const myLocation = {
 };
 let initialDistrict = 0;
 onMounted(async () => {
-  await locateMe();
-  await getClinicsByGeoLocationAndRadius();
+  console.log(searchNearMe.value);
+  if (searchNearMe.value === true) {
+    await locateMe();
+    await getClinicsByGeoLocationAndRadius();
+  }
   getParams();
+  if (selectedClinic.value !== null) {
+    console.log(selectedClinic.value);
+    console.log(selectedClinic.value);
+    selectedDistrict.value = selectedClinic.value.district;
+    selectedProvince.value = provinceService.getById(
+      selectedClinic.value.district.province_id
+    );
+  }
   //  console.log(utenteToEdit.value)
 });
 
@@ -123,6 +135,11 @@ const districts = computed(() => {
   }
 });
 
+const changeProvince = () => {
+  console.log('teste');
+  selectedDistrict.value = null;
+};
+
 const clinics = computed(() => {
   if (selectedDistrict.value != null) {
     return getClinicsByDistrictId();
@@ -136,8 +153,12 @@ const clinics = computed(() => {
 const changeValue = async () => {
   console.log('mudou');
   if (searchNearMe.value) {
-    await locateMe();
+    selectedDistrict.value = null;
+    selectedProvince.value = null;
     disableFields.value = true;
+    showloading();
+    await locateMe();
+    await getClinicsByGeoLocationAndRadius();
   } else {
     disableFields.value = false;
   }
@@ -208,7 +229,7 @@ const getAllClinicsByDistrictId = async (districtId) => {
 
 const locateMe = async (val) => {
   // showloading();
-  console.log(val)
+  console.log(val);
   gettingLocation.value = true;
   try {
     gettingLocation.value = false;
@@ -220,6 +241,9 @@ const locateMe = async (val) => {
   } catch (e) {
     gettingLocation.value = false;
     errorStr.value = e.message;
+    myLocation.latitude = -25.9678239;
+    myLocation.longitude = 32.5864914;
+    console.log(myLocation);
     closeLoading();
     alertInfo(
       'Não tem permissões ou a função de localização do dispositivo encontra-se desligada.\n Por favor dê as permissões ou ligue a localização.'

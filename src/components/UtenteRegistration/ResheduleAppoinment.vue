@@ -6,6 +6,7 @@
           <q-input
             outlined
             disable
+            rounded
             v-model="editedAppointment.utente.systemNumber"
             label="Código"
             dense
@@ -13,10 +14,11 @@
           />
         </div>
 
-        <div class="row q-pt-md">
+        <div class="row q-pt-md q-pb-sm">
           <q-input
             outlined
             disable
+            rounded
             v-model="editedAppointment.utente.firstNames"
             label="Nome"
             dense
@@ -25,6 +27,7 @@
           <q-input
             outlined
             disable
+            rounded
             v-model="editedAppointment.utente.lastNames"
             label="Apelido"
             dense
@@ -33,12 +36,7 @@
         </div>
         <clinic-location-listing></clinic-location-listing>
         <div class="row q-pt-md">
-          <q-input
-            dense
-            outlined
-            v-model="editedAppointment.appointmentDate"
-            class="col"
-          >
+          <q-input dense outlined rounded v-model="appointmentDate" class="col">
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy
@@ -48,30 +46,22 @@
                 >
                   <q-date
                     mask="DD-MM-YYYY"
-                    v-model="editedAppointment.appointmentDate"
-                    :options="blockDataPassado"
+                    v-model="appointmentDate"
+                    :options="blockDataFuturaAndPassadaAppo"
                   >
                     <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
+                      <q-btn
+                        v-close-popup
+                        label="Fechar"
+                        color="primary"
+                        flat
+                      />
                     </div>
                   </q-date>
                 </q-popup-proxy>
               </q-icon>
             </template>
           </q-input>
-          <!--        <q-input dense outlined v-model="editedAppointment.time" mask="time" :rules="['time']" class="q-ml-md col">
-                        <template v-slot:append>
-                        <q-icon name="access_time" class="cursor-pointer">
-                            <q-popup-proxy transition-show="scale" transition-hide="scale">
-                            <q-time v-model="editedAppointment.time">
-                                <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                                </div>
-                            </q-time>
-                            </q-popup-proxy>
-                        </q-icon>
-                        </template>
-                    </q-input> -->
         </div>
       </q-card-section>
       <q-card-actions align="right" class="q-mb-md">
@@ -101,61 +91,82 @@ import { useQuasar } from 'quasar';
 import { useSwal } from 'src/composables/shared/dialog/dialog';
 import appointmentService from 'src/services/api/appointment/appointmentService';
 import ClinicLocationListing from './ClinicLocationListing.vue';
+import { useDateUtils } from 'src/composables/shared/dateUtils/dateUtils';
+import { useAppointmentValidation } from 'src/composables/shared/appointment/appointmentMethods';
+const { getDateFromHyphenDDMMYYYYWithTime } = useDateUtils();
 
 // const appointment = inject('editedAppointment');
 const { alertSucess } = useSwal();
+const { validateAppointmentDate } = useAppointmentValidation();
 const editedAppointment = inject('appointment');
 const showReshedule = inject('showReshedule');
 const $q = useQuasar();
 const selectedClinic = ref(null);
+const appointmentDate = ref('');
 //const date = ref(moment(date).format('YYYY-MM-DD'));
-
-const blockDataPassado = (date) => {
-  return date >= moment(new Date()).format('YYYY/MM/DD');
-};
 
 const promptToConfirm = (appointmentToConfirm) => {
   $q.dialog({
-    title: 'Confirm',
-    message: 'Deseja Confirmar?',
+    title: 'Confirmação',
+    message:
+      'Deseja marcar a consulta para data ' +
+      appointmentDate.value +
+      ' na ' +
+      selectedClinic.value.name +
+      '?',
     cancel: true,
     persistent: true,
   }).onOk(() => {
     // const clinic = appointmentToConfirm.clinic;
     appointmentToConfirm.clinic = {};
     appointmentToConfirm.clinic.id = selectedClinic.value.id;
+    console.log(getDateFromHyphenDDMMYYYYWithTime(appointmentDate.value));
     appointmentToConfirm.appointmentDate = moment(
-      editedAppointment.value.appointmentDate,
+      getDateFromHyphenDDMMYYYYWithTime(appointmentDate.value),
       'DD-MM-YYYY'
     ).toDate();
 
     //  appointmentToConfirm.value.time = editedAppointment.value.time;
 
     console.log(appointmentToConfirm);
-    appointmentService
-      .patch(appointmentToConfirm.id, appointmentToConfirm)
-      .then((resp) => {
-        console.log(resp.data);
 
-        // editedAppointment.value = resp.data;
-        editedAppointment.value.appointmentDate = moment(
-          editedAppointment.value.appointmentDate
-        ).format('DD-MM-YYYY');
-        editedAppointment.value.clinic = selectedClinic.value;
-        alertSucess('Consulta Remarcada com Sucesso');
-        showReshedule.value = false;
-        console.log(editedAppointment.value);
-        // showSucessScreen.value = true;
-      });
+    if (validateAppointmentDate(appointmentDate.value)) {
+      appointmentService
+        .patch(appointmentToConfirm.id, appointmentToConfirm)
+        .then((resp) => {
+          console.log(resp.data);
+
+          // editedAppointment.value = resp.data;
+          editedAppointment.value.appointmentDate = moment(
+            appointmentToConfirm.appointmentDate
+          ).format('DD-MM-YYYY');
+          editedAppointment.value.clinic = selectedClinic.value;
+          alertSucess(
+            'A sua solicitação foi enviada para a  ' +
+              selectedClinic.value.name +
+              ', por favor aguarde confirmação por SMS.'
+          );
+          showReshedule.value = false;
+          console.log(editedAppointment.value);
+          // showSucessScreen.value = true;
+        });
+    }
   });
 };
 
+const blockDataFuturaAndPassadaAppo = (date) => {
+  const currentDate = moment();
+  const threeMonthsFromNow = moment().add(3, 'months');
+
+  return (
+    moment(date).isBefore(threeMonthsFromNow) &&
+    moment(date).isSameOrAfter(currentDate)
+  );
+};
+
 onBeforeMount(() => {
-  console.log(editedAppointment);
   // editedAppointment.value = Object.assign({}, props.appointment);
-  editedAppointment.value.appointmentDate = moment(
-    editedAppointment.value.appointmentDate
-  ).format('DD-MM-YYYY');
+  appointmentDate.value = editedAppointment.value.appointmentDate;
   selectedClinic.value = editedAppointment.value.clinic;
 });
 

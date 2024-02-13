@@ -9,12 +9,6 @@
       <div class="row text-center q-my-xl">
         <q-icon class="col" name="task_alt" size="200px" color="primary" />
       </div>
-      <div class="row text-center q-my-xl">
-        <p class="col text-center text-weight-medium">
-          Parabens!<br />
-          O Seu Registo Foi Enviado com sucesso
-        </p>
-      </div>
       <div class="row">
         <!-- First column -->
         <div class="col text-center">
@@ -24,10 +18,11 @@
           <p class="text-subtitle1 text-center">
             Aguarde pela confirmação via SMS, de disponibilidade do lado da
             unidade sanitária {{ appointment.clinic.name }}, para o dia
-            {{ appointment.appointmentDate }}. O seu código de utente é
-            {{ utente.systemNumber }}. Este código serve para visualizar dados
-            da sua consulta e/ou remarcar no sistema CMMV, bem como deve ser
-            apresentado quando for à unidade sanitária para a sua identificação
+            {{ getDDMMYYYFromJSDate(appointment.appointmentDate) }}. O seu
+            código de utente é {{ utente.systemNumber }}. Este código serve para
+            visualizar dados da sua consulta e/ou remarcar no sistema CMMV, bem
+            como deve ser apresentado quando for à unidade sanitária para a sua
+            identificação
           </p>
         </div>
       </div>
@@ -47,11 +42,9 @@
   </q-page>
 </template>
 <script setup>
-import { inject, onMounted } from 'vue';
-
-onMounted(async () => {
-  console.log(utente.value);
-});
+import { inject } from 'vue';
+import { useDateUtils } from 'src/composables/shared/dateUtils/dateUtils';
+const { getDDMMYYYFromJSDate } = useDateUtils();
 
 const redirectToIndex = () => {
   console.log('clicked');

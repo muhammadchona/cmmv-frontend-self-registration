@@ -35,7 +35,7 @@
             unelevated
             rounded
             @click="$emit('searchAppointment')"
-            label="Visualizar / Alterar consulta"
+            label="Visualizar/Alterar consulta"
           />
         </div>
       </div>

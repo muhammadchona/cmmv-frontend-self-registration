@@ -72,6 +72,21 @@
       @click="downloadList"
     />
   </div>
+  <div class="row justify-end">
+    <p>
+      Para baixar todas as Unidades Sanitarias
+
+      <q-btn
+        class="link"
+        flat
+        color="primary"
+        text-color="primary"
+        @click="downloadAllClinicsList"
+      >
+        clique aqui
+      </q-btn>
+    </p>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, computed } from 'vue';
@@ -143,11 +158,23 @@ const getAllClinicsByDistrictId = async (districtId) => {
   return await clinicService.getAllClinicsByDistrictId(districtId);
 };
 
+const getAllClinicsWithVmmc = async () => {
+  return await clinicService.getAllClinicsWithVMMC();
+};
+
 const downloadList = () => {
   clinicList.downloadPDF(
     selectedProvince.value,
     selectedDistrict.value,
-    clinics.value
+    clinics.value,
+    false
   );
+};
+
+const downloadAllClinicsList = async () => {
+  await getAllClinicsWithVmmc();
+  const clinicsAll = clinicService.getLocalClinicsAll();
+  console.log(clinicsAll);
+  clinicList.downloadPDF(null, null, clinicsAll, true);
 };
 </script>

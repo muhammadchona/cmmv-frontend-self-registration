@@ -16,7 +16,7 @@ const fileName = reportName.concat(
 );
 
 export default {
-  async downloadPDF(province: any, district: any, result: []) {
+  async downloadPDF(province: any, district: any, result: [], all: boolean) {
     const doc = new JsPDF({
       orientation: 'l',
       unit: 'mm',
@@ -43,14 +43,14 @@ export default {
       ],
       [
         {
-          content: 'Província: ' + province.description,
+          content: 'Província: ' + (all !== true ? province.description : ''),
           halign: 'center',
           valign: 'middle',
           fontStyle: 'bold',
           fontSize: '14',
         },
         {
-          content: 'Distrito: ' + district.description,
+          content: 'Distrito: ' + (all !== true ? district.description : ''),
           halign: 'center',
           valign: 'left',
           fontStyle: 'bold',
@@ -121,9 +121,55 @@ export default {
       console.log(doc);
       const pdfOutput = doc.output();
       console.log(pdfOutput);
-      //  this.downloadFile(fileName, 'pdf', pdfOutput);
+      this.downloadFile(fileName, 'pdf', pdfOutput);
     }
     // params.value.loading.loading.hide()
     // return doc.save('HistoricoDeLevantamento.pdf')
+  },
+
+  downloadFile(fileName: string, fileType: string, blop) {
+    const titleFile = fileName + '.' + fileType;
+    const targetPath =
+      cordova.file.externalRootDirectory + 'Download/' + titleFile;
+    console.log('result' + titleFile);
+    document.addEventListener('deviceready', onDeviceReady, false);
+    function onDeviceReady() {
+      console.log(cordova.file);
+      console.log(FileTransfer);
+      saveBlobToFile(blop, targetPath);
+    }
+    function saveBlobToFile(blob, filePath) {
+      const fileTransfer = new FileTransfer();
+
+      fileTransfer.download(
+        encodeURI('data:application/pdf,' + blop),
+        filePath,
+        function (entry) {
+          console.log('File download success: ' + entry.toURL());
+          openFile();
+          // Handle success, you can do further actions here
+        },
+        function (error) {
+          console.error('File download error: ' + JSON.stringify(error));
+          // Handle error, you can do error handling here
+        },
+        false // Set to true if you want to trust all hosts (use with caution)
+      );
+    }
+
+    function openFile() {
+      const strTitle = titleFile;
+      console.log('file system 44444: ' + strTitle);
+      const folder =
+        cordova.file.externalRootDirectory + 'Download/' + strTitle;
+      console.log('file system 2222: ' + folder);
+      const documentURL = decodeURIComponent(folder);
+      cordova.plugins.fileOpener2.open(documentURL, 'application/pdf', {
+        error: function (e) {
+          console.log('file system open3333366: ' + e + documentURL);
+        },
+      });
+    }
+    // }
   },
 };

@@ -20,11 +20,20 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "true"
-      }
+      },
+      "cordova-plugin-file": {
+        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      },
+      "com.outsystems.plugins.filechooser": {},
+      "cordova-plugin-file-opener2": {},
+      "cordova-plugin-file-transfer": {}
     }
   },
   "devDependencies": {
-    "cordova-android": "^12.0.0",
+    "com.outsystems.plugins.filechooser": "github:OutSystems/Cordova-Plugin-FileChooser",
+    "cordova-android": "^12.0.1",
+    "cordova-plugin-file": "^8.0.0",
+    "cordova-plugin-file-transfer": "^2.0.0",
     "cordova-plugin-geolocation": "github:apache/cordova-plugin-geolocation",
     "cordova-plugin-splashscreen": "github:apache/cordova-plugin-splashscreen"
   }

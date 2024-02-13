@@ -49,6 +49,17 @@ export default {
       throw error;
     }
   },
+  async getAllClinicsWithVMMC() {
+    await api()
+      .get('/clinic/all/')
+      .then((resp) => {
+        clinic.save(resp.data);
+        return resp.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
 
   round(value: number, precision: number) {
     const multiplier = Math.pow(10, precision || 0);
@@ -98,14 +109,6 @@ export default {
     clinic.flush();
   },
   getLocalClinicsByDistrictId(districtId: number) {
-    console.log(
-      clinic
-        .query()
-        .with('province')
-        .with('district')
-        .where('district_id', districtId)
-        .get()
-    );
     return clinic
       .query()
       .with('province')
@@ -136,5 +139,9 @@ export default {
       })
       .orderBy('distance', 'asc')
       .get();
+  },
+
+  getLocalClinicsAll() {
+    return clinic.query().with('province').with('district').get();
   },
 };

@@ -17,7 +17,7 @@
 
           <!-- Title -->
           <div class="row text-white text-weight-bolder justify-center">
-            Pesquisa de Consultas
+            Visualizar/Alterar consulta
           </div>
 
           <!-- Space filler -->
@@ -27,7 +27,7 @@
           <div class="col-12 q-pa-md">
             <div class="row">
               <q-input
-                label="Codigo do Utente *"
+                label="Introduza o codigo do utente *"
                 dense
                 rounded
                 outlined
@@ -35,6 +35,7 @@
                 :rules="[(val) => !!val || 'Por favor indicar o nome']"
                 v-model="utenteSystemNumber"
                 class="col-12"
+                color="white"
               />
             </div>
             <div class="row justify-end">
@@ -43,7 +44,8 @@
                 outline
                 push
                 rounded
-                label="Pesquisar"
+                label="Visualizar"
+                icon="visibility"
                 @click="searchAppointment"
               />
             </div>
@@ -137,6 +139,7 @@ const utenteSystemNumber = ref();
 
 const searchAppointment = async () => {
   console.log(utenteSystemNumber.value);
+  utenteSystemNumber.value = utenteSystemNumber.value.toUpperCase();
   if (
     utenteSystemNumber.value === null ||
     utenteSystemNumber.value === undefined ||
