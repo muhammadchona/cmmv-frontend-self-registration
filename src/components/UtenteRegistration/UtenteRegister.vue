@@ -100,12 +100,13 @@
                   'Digite uma idade real e maior que 14 anos de idade',
               ]"
               lazy-rules
+              @blur="dateOfBirthCalculator()"
             >
               <template v-slot:append>
                 <q-icon
                   name="autorenew"
                   class="cursor-pointer"
-                  @update:model-value="dateOfBirthCalculator()"
+                  @click="dateOfBirthCalculator()"
                 />
               </template>
             </q-input>
@@ -123,6 +124,7 @@
             outlined
             type="tel"
             :rules="[(val) => phoneRules(val)]"
+            @update:model-value="numberExists = false"
             v-model="utente.cellNumber"
             lazy-rules
             label="Número de Telefone"
@@ -189,6 +191,7 @@
             color="primary"
             type="submit"
             label="Submeter"
+            :loading="submitting"
           />
         </div>
       </form>
@@ -219,7 +222,6 @@ const { getYYYYMMDDFromJSDate, getDateFromHyphenDDMMYYYY } = useDateUtils();
 const utente = ref(new Utente());
 const currUtente = ref({});
 const selectedClinic = ref(null);
-
 const myLocation = {
   latitude: '',
   longitude: '',
@@ -241,6 +243,8 @@ const appointment = ref(new Appointment());
 const showSucessScreen = ref(false);
 const qDateProxyRef = ref(null);
 const appointmentDate = ref('');
+const numberExists = ref(false);
+const submitting = ref(false);
 
 onMounted(async () => {
   currUtente.value = Object.assign({}, utente.value);
@@ -272,10 +276,12 @@ const ageCalculator = () => {
       moment(getDateFromHyphenDDMMYYYY(dateOfBirth.value), 'YYYY-MM-DD'),
       'years'
     );
+    if (ageCalculated.value > 14 && ageCalculated.value < 100) {
+      ageRef.value.resetValidation();
+    }
   } else {
     ageCalculated.value = '';
   }
-  qDateProxyRef.value.closePopup();
 };
 
 const blockDataFutura = (date) => {
@@ -326,12 +332,12 @@ const validateUtente = () => {
     selectedClinic.value !== null &&
     !appointmentDateRef.value.hasError
   ) {
+    submitting.value = true;
     saveOrUpdateUtente();
   }
 };
 
 const saveOrUpdateUtente = () => {
-  console.log(dateOfBirth.value);
   utente.value.birthDate = getYYYYMMDDFromJSDate(
     getDateFromHyphenDDMMYYYY(dateOfBirth.value)
   );
@@ -342,24 +348,27 @@ const saveOrUpdateUtente = () => {
     utenteService
       .post(utente.value)
       .then((resp) => {
-        console.log(resp.data);
+        submitting.value = false;
         utente.value = resp.data;
-        console.log(utente.value);
         showSucessScreen.value = true;
       })
       .catch((error) => {
+        submitting.value = false;
+        numberExists.value = true;
+        phoneRef.value.validate();
         alertError(
-          'Ocorreu um erro a gravar os dados ! Ja Existe um utente com o mesmo numero de telefone, nome e apelido'
+          'Não foi possível gravar os dados, porque já existe uma pessoa registada com este número de telefone. Tente com outro número de telefone.'
         );
         console.log(error);
       });
 
     closeRegistration(false);
+  } else {
+    submitting.value = false;
   }
 };
 
 const fillAppointmentData = () => {
-  console.log(appointmentDate);
   const newDate = new Date(appointmentDate.value, 'DD-MM-YYYY');
   utente.value.clinic = selectedClinic.value;
   utente.value.status = 'ENVIADO';
@@ -384,6 +393,8 @@ const phoneRules = (val) => {
     return 'O Número é invalido. Deve conter 9 dígitos.';
   } else if (validatePhonePrefix(parseInt(val.substring(0, 2)))) {
     return 'O Número é invalido. O codigo da operadora não existe';
+  } else if (numberExists.value) {
+    return '';
   }
 };
 
@@ -415,3 +426,8 @@ provide('utente', utente);
 provide('appointment', appointment);
 provide('selectedClinic', selectedClinic);
 </script>
+<style scoped>
+.hide-validation-message {
+  display: none !important;
+}
+</style>

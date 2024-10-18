@@ -35,7 +35,7 @@ export default {
             clinic.longitude,
             'K'
           );
-          clinic.distance = this.round(calcDist / 1000, 3);
+          clinic.distance = this.round(calcDist, 3);
         }
         console.log(clinic);
         clinics.push(clinic);

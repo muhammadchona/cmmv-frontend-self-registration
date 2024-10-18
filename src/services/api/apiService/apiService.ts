@@ -2,8 +2,12 @@ import axios from 'axios';
 //import UsersService from 'src/services/UsersService';
 
 const instance = axios.create({
-  baseURL: 'http://173.255.228.95:4110/api',
+  //baseURL: 'http://173.255.228.95:4110/api',
   // baseURL: 'http://localhost:8882/api',
+  // baseURL: 'http://10.10.12.69:8882/api',
+  // baseURL: 'http://192.168.165.196:8882/api',
+  baseURL: 'https://vmmcgd.csaude.org.mz:443/api',
+  // baseURL: 'http://172.16.60.17:4110/api',
 });
 // Request interceptor for API calls
 instance.interceptors.request.use(

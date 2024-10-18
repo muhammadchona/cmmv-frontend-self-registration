@@ -45,7 +45,7 @@
     <q-btn
       class=""
       flat
-      color="red"
+      color="primary"
       @click="$emit('previousScreen')"
       label="Sair"
     />

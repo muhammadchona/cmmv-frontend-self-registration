@@ -19,10 +19,11 @@
             Aguarde pela confirmação via SMS, de disponibilidade do lado da
             unidade sanitária {{ appointment.clinic.name }}, para o dia
             {{ getDDMMYYYFromJSDate(appointment.appointmentDate) }}. O seu
-            código de utente é {{ utente.systemNumber }}. Este código serve para
-            visualizar dados da sua consulta e/ou remarcar no sistema CMMV, bem
-            como deve ser apresentado quando for à unidade sanitária para a sua
-            identificação
+            código de utente é
+            <strong><br />{{ utente.systemNumber }} </strong>. Este código serve
+            para visualizar dados da sua consulta e/ou remarcar no sistema CMMV,
+            bem como deve ser apresentado quando for à unidade sanitária para a
+            sua identificação
           </p>
         </div>
       </div>

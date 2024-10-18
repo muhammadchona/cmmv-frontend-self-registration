@@ -138,6 +138,9 @@ const districts = computed(() => {
 const changeProvince = () => {
   console.log('teste');
   selectedDistrict.value = null;
+  if (selectedClinic.value !== null) {
+    selectedClinic.value = null;
+  }
 };
 
 const clinics = computed(() => {
@@ -155,6 +158,7 @@ const changeValue = async () => {
   if (searchNearMe.value) {
     selectedDistrict.value = null;
     selectedProvince.value = null;
+    selectedClinic.value = null;
     disableFields.value = true;
     showloading();
     await locateMe();
@@ -203,9 +207,10 @@ const getClinicsByGeoLocationAndRadius = async () => {
   const clinicsNearMe = await clinicService.getClinicsByGeoLocationAndRadius(
     myLocation.latitude,
     myLocation.longitude,
-    10
+    100
   );
   console.log(clinicsNearMe);
+  /*
 
   clinicsNearMe.forEach((clinic) => {
     if (clinic.longitude !== undefined && clinic.longitude !== null) {
@@ -220,6 +225,7 @@ const getClinicsByGeoLocationAndRadius = async () => {
     }
   });
   console.log(clinicsNearMe);
+  */
   return clinicsNearMe;
 };
 

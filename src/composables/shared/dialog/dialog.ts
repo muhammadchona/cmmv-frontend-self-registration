@@ -10,9 +10,9 @@ export function useSwal() {
     });
   }
 
-  function alertWarning(message: string) {
+  function alertWarning(message: string, title: boolean) {
     return swal({
-      title: 'Aviso',
+      title: title !== false ? 'Aviso' : '',
       text: message,
       icon: 'warning',
       // buttons: 'Aceitar',

@@ -73,7 +73,7 @@
             unelevated
             rounded
             color="green"
-            label="Pesquisar Consulta"
+            label="Visualizar Consulta"
             @click="$emit('searchAppointment')"
           />
         </q-col>
@@ -84,7 +84,7 @@
             unelevated
             rounded
             color="green"
-            label="Pesquisar Consulta"
+            label="Visualizar Consulta"
             @click="$emit('searchAppointment')"
           />
         </q-col>
@@ -100,7 +100,12 @@
           />
         </div>
         <div class="col-4 flex justify-center items-center">
-          <q-btn flat color="red" @click="$emit('firstScreen')" label="Sair" />
+          <q-btn
+            flat
+            color="primary"
+            @click="$emit('firstScreen')"
+            label="Sair"
+          />
         </div>
         <div class="col-4"></div>
       </div>

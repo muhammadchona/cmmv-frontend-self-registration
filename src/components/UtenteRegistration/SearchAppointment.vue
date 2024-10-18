@@ -58,7 +58,7 @@
       >
         <q-card class="my-card full-width">
           <q-card-section>
-            <div class="text-h6 text-center">Detalhes da Marcação</div>
+            <div class="text-h6 text-center">Dados da consulta</div>
           </q-card-section>
           <q-separator />
           <q-card-section class="q-pt">
@@ -151,9 +151,11 @@ const searchAppointment = async () => {
 
   if (!validateCodeFormat()) {
     alertWarning(
-      'O código de utente introduzido está no formato incorrecto.' +
-        'Dica: ' +
-        '1- Verifique se cumpre o formato YYYYMM-NA-XXXXXXXXX.'
+      'O código de utente introduzido está no formato incorrecto. \n' +
+        'Dica: \n' +
+        '1- Verifique se cumpre o formato YYYYMM-NA-XXXXXXXXX. \n' +
+        '2- Confirme o histórico de mensagens recebidas no número de telefone introduzido durante a marcação da consulta.',
+      true
     );
     return true;
   }

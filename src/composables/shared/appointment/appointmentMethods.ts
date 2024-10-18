@@ -14,9 +14,7 @@ export function useAppointmentValidation() {
       );
       return false;
     } else if (moment(appointmentDate).isAfter(threeMonthsFromNow)) {
-      useSwal().alertError(
-        'A data da consulta indicada é menor que a data da corrente.'
-      );
+      useSwal().alertError('Indique uma data dentro de 3 meses.');
       return false;
     }
     return true;

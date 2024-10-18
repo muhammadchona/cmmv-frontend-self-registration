@@ -1,7 +1,5 @@
 <template>
-  <div class="row text-black text-weight-bolder justify-center q-pt-lg text-h6">
-    Informação
-  </div>
+  <div class="row text-black justify-center q-pt-lg text-h4">Informação</div>
   <div class="container">
     <div class="red-square">
       <div class="image-container">
@@ -52,7 +50,7 @@
         </q-tab-panel>
       </q-tab-panels>
     </div>
-    <div class="col q-my-sm">
+    <div class="col q-my-sm absolute-bottom">
       <q-btn
         flat
         round
@@ -100,6 +98,6 @@ const tab = ref('material');
 
 .image-container {
   width: 100%;
-  max-width: 600px; /* Set maximum width for responsiveness */
+  max-width: auto; /* Set maximum width for responsiveness */
 }
 </style>
